@@ -8,6 +8,22 @@ const grid = [];
 
 function App() {
   const [position, setposition] = useState([0, 0]);
+  const [direction, setDirection] = useState("right");
+  useEffect(() => {
+    const [body] = document.getElementsByTagName("body");
+    body.onkeydown = ({ key }) => {
+      switch (key) {
+        case "ArrowUp":
+          return setDirection("up");
+        case "ArrowDown":
+          return setDirection("down");
+        case "ArrowLeft":
+          return setDirection("left");
+        case "ArrowRight":
+          return setDirection("right");
+      }
+    };
+  }, []);
   return (
     <div style={makeOuterStyles()}>
       <div style={makeGridStyles()}>

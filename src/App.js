@@ -7,23 +7,26 @@ const grid = [];
 );
 
 function App() {
-  const [position, setposition] = useState([0, 0]);
+  const [position, setPosition] = useState([0, 0]);
   const [direction, setDirection] = useState("right");
   useEffect(() => {
-    const [body] = document.getElementsByTagName("body");
-    body.onkeydown = ({ key }) => {
-      switch (key) {
-        case "ArrowUp":
-          return setDirection("up");
-        case "ArrowDown":
-          return setDirection("down");
-        case "ArrowLeft":
-          return setDirection("left");
-        case "ArrowRight":
-          return setDirection("right");
+    const interval = setInterval(() => {
+      const [x, y] = position;
+      console.log(x, y);
+      switch (direction) {
+        case "up":
+          return setPosition([x - 1, y]);
+        case "down":
+          return setPosition([x + 1, y]);
+        case "left":
+          return setPosition([x, y - 1]);
+        case "right":
+          return setPosition([x, y + 1]);
       }
-    };
-  }, []);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [direction]);
   return (
     <div style={makeOuterStyles()}>
       <div style={makeGridStyles()}>

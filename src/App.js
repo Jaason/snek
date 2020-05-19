@@ -1,56 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 
 const rowsLength = 10;
 const grid = [];
+
 [...Array(rowsLength).keys()].forEach((i) =>
   [...Array(rowsLength).keys()].forEach((_, j) => grid.push([i, j]))
 );
-
 function App() {
+  console.log(grid);
   const defaultState = [0, 0];
-  const [position, setPosition] = useState([0, 0]);
   const [direction, setDirection] = useState("right");
-  useEffect(() => {
-    const defaultState = [0, 0];
-    const interval = setInterval(() => {
-      switch (direction) {
-        case "up":
-          return setPosition(([x, y]) => (x === 0 ? defaultState : [x - 1, y]));
-        case "down":
-          return setPosition(([x, y]) =>
-            x === rowsLength - 1 ? defaultState : [x + 1, y]
-          );
-        case "left":
-          return setPosition(([x, y]) => (y === 0 ? defaultState : [x, y - 1]));
-        case "right":
-          return setPosition(([x, y]) =>
-            y === rowsLength - 1 ? defaultState : [x, y + 1]
-          );
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [direction]);
-  return (
-    <div style={makeOuterStyles()}>
-      <div style={makeGridStyles()}>
-        {[...Array(rowsLength).keys()].map((i) => (
-          <Row
-            key={i}
-            rowVals={grid.slice(i * rowsLength, i * rowsLength + rowsLength)}
-            currentPosition={position}
-          />
-        ))}
-      </div>
-    </div>
-  );
-
-  function Row({ rowVals, currentPosition: [currentX, currentY] }) {
-    return rowVals.map(([x, y]) => (
-      <Tile key={x + y} isActive={currentX === x && currentY === y} />
-    ));
-  }
-
+  const [position, dispatch] = useReducer(reducer, [0, 0]);
   function makeOuterStyles() {
     return {
       height: "100vh",
@@ -81,5 +41,50 @@ function App() {
     };
     return <div style={styles} />;
   }
+
+  function Row({ rowVals = [0, 0], currentPosition: [currentX, currentY] }) {
+    return rowVals.map(([x, y]) => (
+      <Tile key={x + y} isActive={currentX === x && currentY === y} />
+    ));
+  }
+
+  function reducer([x, y]) {
+    const defaultState = [0, 0];
+    const [body] = document.getElementsByTagName("body");
+
+    body.onkeydown = ({ key }) => {
+      switch (direction) {
+        case "right":
+          return y === rowsLength - 1 ? defaultState : [x, y + 1];
+        case "left":
+          return y === 0 ? defaultState : [x, y - 1];
+        case "up":
+          return x === 0 ? defaultState : [x - 1, y];
+        case "down":
+          return x === rowsLength - 1 ? defaultState : [x + 1, y];
+        default:
+          return [0, 0];
+      }
+    };
+  }
+
+  useEffect(() => {
+    const interval = setInterval(dispatch, 1000);
+    return () => clearInterval(interval);
+  }, [dispatch]);
+
+  return (
+    <div style={makeOuterStyles()}>
+      <div style={makeGridStyles()}>
+        {[...Array(rowsLength).keys()].map((i) => (
+          <Row
+            key={i}
+            rowVals={grid.slice(i * rowsLength, i * rowsLength + rowsLength)}
+            currentPosition={position}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }
 export default App;

@@ -10,9 +10,23 @@ function App() {
   const [position, setposition] = useState([0, 0]);
   return (
     <div style={makeOuterStyles()}>
-      <div style={makeGridStyles()}></div>
+      <div style={makeGridStyles()}>
+        {[...Array(rowsLength).keys()].map((i) => (
+          <Row
+            key={i}
+            rowVals={grid.slice(i * rowsLength, i * rowsLength + rowsLength)}
+            currentPosition={position}
+          />
+        ))}
+      </div>
     </div>
   );
+
+  function Row({ rowVals, currentPosition: [currentX, currentY] }) {
+    return rowVals.map(([x, y]) => (
+      <Tile key={x + y} isActive={currentX === x && currentY === y} />
+    ));
+  }
 
   function makeOuterStyles() {
     return {

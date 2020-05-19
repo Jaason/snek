@@ -7,21 +7,25 @@ const grid = [];
 );
 
 function App() {
+  const defaultState = [0, 0];
   const [position, setPosition] = useState([0, 0]);
   const [direction, setDirection] = useState("right");
   useEffect(() => {
+    const defaultState = [0, 0];
     const interval = setInterval(() => {
-      const [x, y] = position;
-      console.log(x, y);
       switch (direction) {
         case "up":
-          return setPosition([x - 1, y]);
+          return setPosition(([x, y]) => (x === 0 ? defaultState : [x - 1, y]));
         case "down":
-          return setPosition([x + 1, y]);
+          return setPosition(([x, y]) =>
+            x === rowsLength - 1 ? defaultState : [x + 1, y]
+          );
         case "left":
-          return setPosition([x, y - 1]);
+          return setPosition(([x, y]) => (y === 0 ? defaultState : [x, y - 1]));
         case "right":
-          return setPosition([x, y + 1]);
+          return setPosition(([x, y]) =>
+            y === rowsLength - 1 ? defaultState : [x, y + 1]
+          );
       }
     }, 1000);
 

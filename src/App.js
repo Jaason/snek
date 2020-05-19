@@ -33,5 +33,16 @@ function App() {
       flexWrap: "wrap",
     };
   }
+
+  function Tile({ isActive }) {
+    const styles = {
+      width: "30px",
+      height: "30px",
+      border: "1px solid black",
+      margin: "1px",
+      backgroundColor: isActive && "yellow",
+    };
+    return <div style={styles} />;
+  }
 }
 export default App;
